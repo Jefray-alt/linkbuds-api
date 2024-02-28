@@ -4,9 +4,11 @@
 		"node": true,
 		"es2021": true
 	},
+	"parser":  "@typescript-eslint/parser",
 	"extends": [
 		"standard-with-typescript",
-		"prettier"
+		"prettier",
+    "plugin:prettier/recommended"
 	],
 	"plugins": [
     "@typescript-eslint"
@@ -15,9 +17,5 @@
 		"ecmaVersion": "latest",
 		"sourceType": "module"
 	},
-	"rules": {},
-	"ignorePatterns": [
-		"node_modules/",
-		"dist/"
-	]
+	"rules": {}
 }
