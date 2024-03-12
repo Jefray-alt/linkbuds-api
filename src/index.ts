@@ -1,6 +1,7 @@
 import router from './routes';
 import dotenv from 'dotenv';
 import express from 'express';
+import 'reflect-metadata';
 
 dotenv.config();
 
