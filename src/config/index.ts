@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+
+dotenv.config();
 interface DatabaseConfig {
   DB_HOST: string;
   DB_USER: string;
