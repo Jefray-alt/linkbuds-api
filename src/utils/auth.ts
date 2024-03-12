@@ -11,5 +11,5 @@ export const generateJWT = (payload: JWTPayload, expiresIn = '5m'): string => {
   if (secretKey === undefined || secretKey === null) {
     throw new Error('JWT secret key not provided');
   }
-  return jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn });
+  return jwt.sign(payload, secretKey, { expiresIn });
 };
