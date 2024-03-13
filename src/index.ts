@@ -1,4 +1,5 @@
 import { AppDataSource } from './data-source';
+import errorHandler from './middleware/error.middleware';
 import router from './routes';
 import dotenv from 'dotenv';
 import express from 'express';
@@ -13,6 +14,7 @@ void (async function mainModule() {
   try {
     await AppDataSource.initialize();
     app.use(router);
+    app.use(errorHandler);
 
     app.listen(port, () => {
       console.log(`[Server]: Server is running at http://localhost:${port}`);
