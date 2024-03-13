@@ -1,4 +1,4 @@
-import { HttpException } from '../types/error';
+import { HttpException } from '../utils/errors';
 import { type Request, type Response } from 'express';
 
 const errorHandler = (err: unknown, _req: Request, res: Response): void => {
