@@ -6,7 +6,6 @@ import {
   UpdateDateColumn
 } from 'typeorm';
 
-// eslint-disable-next-line prettier/prettier
 @Entity({ name: 'users' })
 export class User {
   @PrimaryGeneratedColumn('uuid')
