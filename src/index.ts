@@ -9,16 +9,15 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT ?? 3000;
 
-AppDataSource.initialize()
-  .then(() => {
-    console.log('Connected to PostgreSQL');
-  })
-  .catch((err) => {
-    console.error('Error during Data Source initialization:', err);
-  });
+void (async function mainModule() {
+  try {
+    await AppDataSource.initialize();
+    app.use(router);
 
-app.use(router);
-
-app.listen(port, () => {
-  console.log(`[Server]: Server is running at http://localhost:${port}`);
-});
+    app.listen(port, () => {
+      console.log(`[Server]: Server is running at http://localhost:${port}`);
+    });
+  } catch (error) {
+    console.error('Error starting the server', error);
+  }
+})();
