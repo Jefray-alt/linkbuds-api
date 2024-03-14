@@ -8,8 +8,12 @@ export default class UserRepository {
     this.userInstance = AppDataSource.getRepository(User);
   }
 
+  create(user: UserPayload): User {
+    return this.userInstance.create(user);
+  }
+
   async save(user: UserPayload): Promise<User> {
-    const userObj = this.userInstance.create(user);
+    const userObj = this.create(user);
     return await this.userInstance.save(userObj);
   }
 }
