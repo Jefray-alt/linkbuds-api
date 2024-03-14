@@ -1,5 +1,7 @@
+import { SALT_ROUNDS } from '../config/constants';
 import UserRepository from '../repository/UserRepository';
 import { generateJWT } from '../utils/auth';
+import bcrypt from 'bcrypt';
 import { Router } from 'express';
 import asyncHandler from 'express-async-handler';
 
@@ -10,10 +12,14 @@ router.post(
   asyncHandler(async (req, res, next) => {
     try {
       const userRepository = new UserRepository();
+      const hashedPassword = bcrypt.hashSync(
+        req.body.password as string,
+        SALT_ROUNDS
+      );
       const userPayload = {
         name: req.body.name,
         email: req.body.email,
-        password: req.body.password
+        password: hashedPassword
       };
 
       const createdUser = await userRepository.save(userPayload);
@@ -31,10 +37,20 @@ router.post(
         '30m'
       );
 
+      createdUser.refreshToken = refreshToken;
+      await userRepository.save(createdUser);
+
       res.cookie('refreshToken', refreshToken, { httpOnly: true });
 
       res.send({
-        user: createdUser,
+        user: {
+          id: createdUser.id,
+          name: createdUser.name,
+          email: createdUser.email,
+          role: createdUser.role,
+          createdAt: createdUser.createdAt,
+          updatedAt: createdUser.updatedAt
+        },
         accessToken
       });
     } catch (error) {
