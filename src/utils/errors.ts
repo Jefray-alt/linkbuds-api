@@ -7,3 +7,9 @@ export class HttpException extends Error {
     this.message = message;
   }
 }
+
+export class NotFoundError extends HttpException {
+  constructor(message = 'Not found') {
+    super(404, message);
+  }
+}
