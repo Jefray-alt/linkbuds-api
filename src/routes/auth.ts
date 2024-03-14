@@ -1,4 +1,5 @@
 import UserRepository from '../repository/UserRepository';
+import { generateJWT } from '../utils/auth';
 import { Router } from 'express';
 import asyncHandler from 'express-async-handler';
 
@@ -14,9 +15,27 @@ router.post(
         email: req.body.email,
         password: req.body.password
       };
+
       const createdUser = await userRepository.save(userPayload);
+
+      const accessToken = generateJWT({
+        userId: createdUser.id,
+        email: createdUser.email
+      });
+
+      const refreshToken = generateJWT(
+        {
+          userId: createdUser.id,
+          email: createdUser.email
+        },
+        '30m'
+      );
+
+      res.cookie('refreshToken', refreshToken, { httpOnly: true });
+
       res.send({
-        user: createdUser
+        user: createdUser,
+        accessToken
       });
     } catch (error) {
       next(error);
