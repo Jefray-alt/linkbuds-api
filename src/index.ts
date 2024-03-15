@@ -1,6 +1,7 @@
 import { AppDataSource } from './data-source';
 import errorHandler from './middleware/error.middleware';
 import { notFoundHandler } from './middleware/notFound.middleware';
+import { tokenDecode } from './middleware/token.middleware';
 import router from './routes';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
@@ -17,6 +18,7 @@ void (async function mainModule() {
     await AppDataSource.initialize();
     app.use(express.json());
     app.use(cookieParser());
+    app.use(tokenDecode);
     app.use(router);
 
     app.use(notFoundHandler);
