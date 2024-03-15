@@ -113,4 +113,31 @@ router.post(
   })
 );
 
+router.get(
+  '/user',
+  asyncHandler(async (req, res, next) => {
+    try {
+      const userRepository = new UserRepository();
+      const user = await userRepository.findById(req.user.userId);
+
+      if (user === null) {
+        throw new UnauthorizedError('User not found');
+      }
+
+      res.send({
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
+  })
+);
+
 export default router;
