@@ -16,4 +16,28 @@ export default class UserRepository {
     const userObj = this.create(user);
     return await this.userInstance.save(userObj);
   }
+
+  async findById(id: string): Promise<User | null> {
+    return await this.userInstance.findOne({ where: { id } });
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return await this.userInstance.findOne({ where: { email } });
+  }
+
+  async updateRefreshToken(
+    id: string,
+    refreshToken: string
+  ): Promise<User | null> {
+    const user = await this.findById(id);
+
+    if (user === null) {
+      return null;
+    }
+
+    user.refreshToken = refreshToken;
+    await this.userInstance.save(user);
+
+    return user;
+  }
 }

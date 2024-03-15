@@ -1,6 +1,7 @@
-import { SALT_ROUNDS } from '../config/constants';
+import { REFRESH_TOKEN_DURATION, SALT_ROUNDS } from '../config/constants';
 import UserRepository from '../repository/UserRepository';
 import { generateJWT } from '../utils/auth';
+import { UnauthorizedError } from '../utils/errors';
 import bcrypt from 'bcrypt';
 import { Router } from 'express';
 import asyncHandler from 'express-async-handler';
@@ -14,7 +15,7 @@ router.post(
       const userRepository = new UserRepository();
       const hashedPassword = bcrypt.hashSync(
         req.body.password as string,
-        SALT_ROUNDS
+        bcrypt.genSaltSync(SALT_ROUNDS)
       );
       const userPayload = {
         name: req.body.name,
@@ -34,7 +35,7 @@ router.post(
           userId: createdUser.id,
           email: createdUser.email
         },
-        '30m'
+        REFRESH_TOKEN_DURATION
       );
 
       createdUser.refreshToken = refreshToken;
@@ -50,6 +51,59 @@ router.post(
           role: createdUser.role,
           createdAt: createdUser.createdAt,
           updatedAt: createdUser.updatedAt
+        },
+        accessToken
+      });
+    } catch (error) {
+      next(error);
+    }
+  })
+);
+
+router.post(
+  '/login',
+  asyncHandler(async (req, res, next) => {
+    try {
+      const userRepository = new UserRepository();
+      const user = await userRepository.findByEmail(req.body.email as string);
+
+      if (user == null) {
+        throw new UnauthorizedError('User not found');
+      }
+
+      const isPasswordValid = bcrypt.compareSync(
+        req.body.password as string,
+        user.password
+      );
+
+      if (!isPasswordValid) {
+        throw new UnauthorizedError('User not found');
+      }
+
+      const accessToken = generateJWT({
+        userId: user.id,
+        email: user.email
+      });
+
+      const refreshToken = generateJWT(
+        {
+          userId: user.id,
+          email: user.email
+        },
+        REFRESH_TOKEN_DURATION
+      );
+
+      await userRepository.updateRefreshToken(user.id, refreshToken);
+
+      res.cookie('refreshToken', refreshToken, { httpOnly: true });
+      res.send({
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt
         },
         accessToken
       });
