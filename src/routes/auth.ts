@@ -115,6 +115,25 @@ router.post(
   })
 );
 
+router.post(
+  '/logout',
+  asyncHandler(async (req, res, next) => {
+    try {
+      const user = await userService.findById(req.user.userId);
+      if (user === null) {
+        throw new UnauthorizedError('User is not logged in');
+      }
+      user.refreshToken = null;
+      res.clearCookie('refreshToken');
+      res.send({
+        message: 'Logout successful'
+      });
+    } catch (error) {
+      next(error);
+    }
+  })
+);
+
 router.get(
   '/user',
   asyncHandler(async (req, res, next) => {
