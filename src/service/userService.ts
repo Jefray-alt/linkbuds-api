@@ -38,7 +38,10 @@ export default class UserService {
       return null;
     }
 
-    const encryptedRefreshToken = await bcrypt.hash(refreshToken, SALT_ROUNDS);
+    const encryptedRefreshToken = await bcrypt.hash(
+      refreshToken,
+      bcrypt.genSaltSync(SALT_ROUNDS)
+    );
     user.refreshToken = encryptedRefreshToken;
     await this.userRepository.save(user);
 

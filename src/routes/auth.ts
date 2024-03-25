@@ -38,7 +38,10 @@ router.post(
         REFRESH_TOKEN_DURATION
       );
 
-      createdUser.refreshToken = refreshToken;
+      createdUser.refreshToken = bcrypt.hashSync(
+        refreshToken,
+        bcrypt.genSaltSync(SALT_ROUNDS)
+      );
       await userService.save(createdUser);
 
       res.cookie('refreshToken', refreshToken, { httpOnly: true });
