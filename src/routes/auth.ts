@@ -1,5 +1,5 @@
 import { REFRESH_TOKEN_DURATION, SALT_ROUNDS } from '../config/constants';
-import UserRepository from '../repository/UserRepository';
+import UserService from '../service/userService';
 import { generateJWT } from '../utils/auth';
 import { UnauthorizedError } from '../utils/errors';
 import bcrypt from 'bcrypt';
@@ -7,12 +7,12 @@ import { Router } from 'express';
 import asyncHandler from 'express-async-handler';
 
 const router = Router();
+const userService = new UserService();
 
 router.post(
   '/register',
   asyncHandler(async (req, res, next) => {
     try {
-      const userRepository = new UserRepository();
       const hashedPassword = bcrypt.hashSync(
         req.body.password as string,
         bcrypt.genSaltSync(SALT_ROUNDS)
@@ -23,7 +23,7 @@ router.post(
         password: hashedPassword
       };
 
-      const createdUser = await userRepository.save(userPayload);
+      const createdUser = await userService.save(userPayload);
 
       const accessToken = generateJWT({
         userId: createdUser.id,
@@ -39,7 +39,7 @@ router.post(
       );
 
       createdUser.refreshToken = refreshToken;
-      await userRepository.save(createdUser);
+      await userService.save(createdUser);
 
       res.cookie('refreshToken', refreshToken, { httpOnly: true });
 
@@ -64,8 +64,7 @@ router.post(
   '/login',
   asyncHandler(async (req, res, next) => {
     try {
-      const userRepository = new UserRepository();
-      const user = await userRepository.findByEmail(req.body.email as string);
+      const user = await userService.findByEmail(req.body.email as string);
 
       if (user == null) {
         throw new UnauthorizedError('User not found');
@@ -93,7 +92,7 @@ router.post(
         REFRESH_TOKEN_DURATION
       );
 
-      await userRepository.updateRefreshToken(user.id, refreshToken);
+      await userService.updateRefreshToken(user.id, refreshToken);
 
       res.cookie('refreshToken', refreshToken, { httpOnly: true });
       res.send({
@@ -117,8 +116,7 @@ router.get(
   '/user',
   asyncHandler(async (req, res, next) => {
     try {
-      const userRepository = new UserRepository();
-      const user = await userRepository.findById(req.user.userId);
+      const user = await userService.findById(req.user.userId);
 
       if (user === null) {
         throw new UnauthorizedError('User not found');
