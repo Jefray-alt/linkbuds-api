@@ -1,3 +1,4 @@
+import { REFRESH_TOKEN_DURATION } from '../config/constants';
 import UserService from '../service/userService';
 import { type UserJwtPayload, verifyToken, generateJWT } from '../utils/auth';
 import { UnauthorizedError } from '../utils/errors';
@@ -30,6 +31,9 @@ router.post(
       }
 
       const accessToken = generateJWT(user);
+      const newRefreshToken = generateJWT(user, REFRESH_TOKEN_DURATION);
+
+      await userService.updateRefreshToken(userDB.id, newRefreshToken);
       res.send({ accessToken });
     } catch (error) {
       if (error instanceof jwt.TokenExpiredError) {
@@ -40,3 +44,5 @@ router.post(
     }
   })
 );
+
+export default router;
