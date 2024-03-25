@@ -1,8 +1,7 @@
 import { nonSecurePaths } from '../routes/paths';
-import { isTokenExpired, type UserJwtPayload } from '../utils/auth';
+import { verifyToken, type UserJwtPayload } from '../utils/auth';
 import { UnauthorizedError } from '../utils/errors';
 import { type NextFunction, type Request, type Response } from 'express';
-import jwt from 'jsonwebtoken';
 
 export const tokenDecode = (
   req: Request,
@@ -20,11 +19,7 @@ export const tokenDecode = (
       throw new UnauthorizedError('Token not provided.');
     }
 
-    if (isTokenExpired(token)) {
-      throw new UnauthorizedError('Token expired.');
-    }
-
-    const decodedToken = jwt.decode(token);
+    const decodedToken = verifyToken(token);
     if (decodedToken === undefined || decodedToken === null) {
       throw new UnauthorizedError('Token not valid.');
     }

@@ -1,3 +1,4 @@
+import { UnauthorizedError } from './errors';
 import jwt from 'jsonwebtoken';
 
 export interface UserJwtPayload {
@@ -16,21 +17,18 @@ export const generateJWT = (
   return jwt.sign(payload, secretKey, { expiresIn });
 };
 
-export const isTokenExpired = (token: string): boolean => {
+export const verifyToken = (token: string): jwt.JwtPayload => {
   const secretKey = process.env.JWT_SECRET_KEY;
   if (secretKey === undefined || secretKey === null) {
     throw new Error('JWT secret key not provided');
   }
   try {
-    jwt.verify(token, secretKey);
-    return false;
+    return jwt.verify(token, secretKey) as UserJwtPayload;
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
-      console.log('Token is already expired');
+      throw new UnauthorizedError('Token has expired');
     } else {
-      console.log('Token is invalid');
+      throw error;
     }
-
-    return true;
   }
 };
