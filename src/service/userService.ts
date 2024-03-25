@@ -1,6 +1,8 @@
+import { SALT_ROUNDS } from '../config/constants';
 import { AppDataSource } from '../data-source';
 import { User } from '../entity/User.entity';
 import { type UserPayload } from '../types/payload';
+import bcrypt from 'bcrypt';
 
 export default class UserService {
   private readonly userRepository;
@@ -36,7 +38,8 @@ export default class UserService {
       return null;
     }
 
-    user.refreshToken = refreshToken;
+    const encryptedRefreshToken = await bcrypt.hash(refreshToken, SALT_ROUNDS);
+    user.refreshToken = encryptedRefreshToken;
     await this.userRepository.save(user);
 
     return user;

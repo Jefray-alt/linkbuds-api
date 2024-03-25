@@ -2,6 +2,7 @@ import { REFRESH_TOKEN_DURATION } from '../config/constants';
 import UserService from '../service/userService';
 import { type UserJwtPayload, verifyToken, generateJWT } from '../utils/auth';
 import { UnauthorizedError } from '../utils/errors';
+import bcrypt from 'bcrypt';
 import {
   type NextFunction,
   type Request,
@@ -26,7 +27,16 @@ router.post(
       const user = verifyToken(refreshToken) as UserJwtPayload;
 
       const userDB = await userService.findById(user.userId);
-      if (userDB?.refreshToken !== refreshToken) {
+      if (userDB === null) {
+        throw new UnauthorizedError('Invalid refresh token');
+      }
+
+      const isTokenValid = await bcrypt.compare(
+        refreshToken,
+        userDB.refreshToken
+      );
+
+      if (isTokenValid) {
         throw new UnauthorizedError('Invalid refresh token');
       }
 
