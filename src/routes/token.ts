@@ -1,6 +1,6 @@
 import { REFRESH_TOKEN_DURATION } from '../config/constants';
 import UserService from '../service/userService';
-import { type UserJwtPayload, verifyToken, generateJWT } from '../utils/auth';
+import { verifyToken, generateJWT } from '../utils/auth';
 import { UnauthorizedError } from '../utils/errors';
 import bcrypt from 'bcrypt';
 import {
@@ -24,7 +24,7 @@ router.post(
         throw new UnauthorizedError('Refresh token is required');
       }
 
-      const user = verifyToken(refreshToken) as UserJwtPayload;
+      const user = verifyToken(refreshToken);
 
       const userDB = await userService.findById(user.userId);
 
@@ -37,9 +37,11 @@ router.post(
         userDB.refreshToken
       );
 
-      if (isTokenValid) {
+      if (!isTokenValid) {
         throw new UnauthorizedError('Invalid refresh token');
       }
+
+      delete user.exp;
 
       const accessToken = generateJWT(user);
       const newRefreshToken = generateJWT(user, REFRESH_TOKEN_DURATION);

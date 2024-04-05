@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 export interface UserJwtPayload {
   userId: string;
   email: string;
+  exp?: number;
 }
 
 export const generateJWT = (
@@ -16,7 +17,7 @@ export const generateJWT = (
   return jwt.sign(payload, secretKey, { expiresIn });
 };
 
-export const verifyToken = (token: string): jwt.JwtPayload => {
+export const verifyToken = (token: string): UserJwtPayload => {
   const secretKey = process.env.JWT_SECRET_KEY;
   if (secretKey === undefined || secretKey === null) {
     throw new Error('JWT secret key not provided');

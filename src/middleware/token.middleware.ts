@@ -1,5 +1,5 @@
 import { nonSecurePaths } from '../config/paths';
-import { verifyToken, type UserJwtPayload } from '../utils/auth';
+import { verifyToken } from '../utils/auth';
 import { UnauthorizedError } from '../utils/errors';
 import { type NextFunction, type Request, type Response } from 'express';
 import jwt from 'jsonwebtoken';
@@ -24,7 +24,7 @@ export const tokenDecode = (
     if (decodedToken === undefined || decodedToken === null) {
       throw new UnauthorizedError('Token not valid.');
     }
-    req.user = decodedToken as UserJwtPayload;
+    req.user = decodedToken;
     next();
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
