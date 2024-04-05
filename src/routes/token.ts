@@ -19,6 +19,7 @@ router.post(
   '/access-token',
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     try {
+      console.log('hit');
       const refreshToken = req.cookies.refreshToken as string;
       if (refreshToken === undefined || refreshToken === null) {
         throw new UnauthorizedError('Refresh token is required');
@@ -41,12 +42,28 @@ router.post(
         throw new UnauthorizedError('Invalid refresh token');
       }
 
-      delete user.exp;
-
-      const accessToken = generateJWT(user);
-      const newRefreshToken = generateJWT(user, REFRESH_TOKEN_DURATION);
+      const accessToken = generateJWT({
+        userId: user.userId,
+        email: user.email
+      });
+      const newRefreshToken = generateJWT(
+        {
+          userId: user.userId,
+          email: user.email
+        },
+        REFRESH_TOKEN_DURATION
+      );
 
       await userService.updateRefreshToken(userDB.id, newRefreshToken);
+
+      res.cookie('refreshToken', newRefreshToken, {
+        httpOnly: true,
+        sameSite: 'none',
+        secure: false,
+        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+      });
+
+      console.log('accesstoken', user);
       res.send({ accessToken });
     } catch (error) {
       if (error instanceof jwt.TokenExpiredError) {

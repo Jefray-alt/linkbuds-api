@@ -134,6 +134,8 @@ router.post(
         throw new UnauthorizedError('User is not logged in');
       }
       user.refreshToken = null;
+
+      await userService.save(user);
       res.clearCookie('refreshToken');
       res.send({
         message: 'Logout successful'
