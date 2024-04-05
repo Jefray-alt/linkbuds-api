@@ -44,7 +44,12 @@ router.post(
       );
       await userService.save(createdUser);
 
-      res.cookie('refreshToken', refreshToken, { httpOnly: true });
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        sameSite: 'none',
+        secure: false,
+        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+      });
 
       res.send({
         user: {
@@ -97,7 +102,12 @@ router.post(
 
       await userService.updateRefreshToken(user.id, refreshToken);
 
-      res.cookie('refreshToken', refreshToken, { httpOnly: true });
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        sameSite: 'none',
+        secure: false,
+        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+      });
       res.send({
         user: {
           id: user.id,

@@ -19,7 +19,7 @@ void (async function mainModule() {
     app.use(express.json());
     app.use(cookieParser());
     app.use(tokenDecode);
-    app.use(router);
+    app.use('/api', router);
 
     app.use(notFoundHandler);
     app.use(errorHandler);

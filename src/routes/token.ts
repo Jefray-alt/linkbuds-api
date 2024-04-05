@@ -27,7 +27,8 @@ router.post(
       const user = verifyToken(refreshToken) as UserJwtPayload;
 
       const userDB = await userService.findById(user.userId);
-      if (userDB === null) {
+
+      if (userDB?.refreshToken == null) {
         throw new UnauthorizedError('Invalid refresh token');
       }
 

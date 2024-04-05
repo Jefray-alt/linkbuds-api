@@ -1,4 +1,4 @@
-import { nonSecurePaths } from '../routes/paths';
+import { nonSecurePaths } from '../config/paths';
 import { verifyToken, type UserJwtPayload } from '../utils/auth';
 import { UnauthorizedError } from '../utils/errors';
 import { type NextFunction, type Request, type Response } from 'express';

@@ -23,7 +23,7 @@ export class User {
   @Column({ default: 'user' })
   role: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   refreshToken: string | null;
 
   @CreateDateColumn()
