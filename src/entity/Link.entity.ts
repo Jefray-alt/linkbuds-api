@@ -1,4 +1,4 @@
-import { User } from './User.entity';
+import { LinkList } from './LinkList.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -13,17 +13,14 @@ export class Link {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, (user) => user.links)
-  user: User;
+  @ManyToOne(() => LinkList, (linkList) => linkList.links)
+  linkList: LinkList;
 
   @Column({ nullable: false })
   name: string;
 
   @Column({ nullable: false })
-  description: string;
-
-  @Column({ default: 'user' })
-  slug: string;
+  url: string;
 
   @CreateDateColumn()
   createdAt: Date;

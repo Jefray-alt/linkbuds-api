@@ -1,35 +1,34 @@
-import { LinkList } from './LinkList.entity';
+import { Link } from './Link.entity';
+import { User } from './User.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
   OneToMany
 } from 'typeorm';
 
-@Entity({ name: 'users' })
-export class User {
+@Entity({ name: 'link_lists' })
+export class LinkList {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @OneToMany(() => LinkList, (linkList) => linkList.user)
-  linkList: LinkList[];
+  @ManyToOne(() => User, (user) => user.linkList)
+  user: User;
+
+  @OneToMany(() => Link, (link) => link.linkList)
+  links: Link[];
 
   @Column({ nullable: false })
   name: string;
 
   @Column({ nullable: false })
-  email: string;
-
-  @Column({ nullable: false })
-  password: string;
+  description: string;
 
   @Column({ default: 'user' })
-  role: string;
-
-  @Column({ type: 'varchar', nullable: true })
-  refreshToken: string | null;
+  slug: string;
 
   @CreateDateColumn()
   createdAt: Date;
