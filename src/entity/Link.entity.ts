@@ -13,7 +13,9 @@ export class Link {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => LinkList, (linkList) => linkList.links)
+  @ManyToOne(() => LinkList, (linkList) => linkList.links, {
+    cascade: true
+  })
   linkList: LinkList;
 
   @Column({ nullable: false })
