@@ -1,23 +1,20 @@
-import { Link } from './Link.entity';
+import { User } from './User.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany
+  ManyToOne
 } from 'typeorm';
 
-@Entity({ name: 'users' })
-export class User {
+@Entity({ name: 'links' })
+export class Link {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @OneToMany(() => Link, (link) => link.user)
-  links: Link[];
-
-  @Column({ nullable: false })
-  name: string;
+  @ManyToOne(() => User, (user) => user.links)
+  user: User;
 
   @Column({ nullable: false })
   email: string;
