@@ -17,16 +17,13 @@ export class Link {
   user: User;
 
   @Column({ nullable: false })
-  email: string;
+  name: string;
 
   @Column({ nullable: false })
-  password: string;
+  description: string;
 
   @Column({ default: 'user' })
-  role: string;
-
-  @Column({ type: 'varchar', nullable: true })
-  refreshToken: string | null;
+  slug: string;
 
   @CreateDateColumn()
   createdAt: Date;
