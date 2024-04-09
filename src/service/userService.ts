@@ -26,7 +26,14 @@ export default class UserService {
     options?: FindOptionsSelect<User>
   ): Promise<User | null> {
     return await this.userRepository.findOne({
-      select: { password: false, refreshToken: false, ...options },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        password: false,
+        refreshToken: false,
+        ...options
+      },
       where: { id }
     });
   }
@@ -37,7 +44,14 @@ export default class UserService {
   ): Promise<User | null> {
     return await this.userRepository.findOne({
       where: { email },
-      select: { password: false, refreshToken: false, ...options }
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        password: false,
+        refreshToken: false,
+        ...options
+      }
     });
   }
 
@@ -45,7 +59,7 @@ export default class UserService {
     id: string,
     refreshToken: string
   ): Promise<User | null> {
-    const user = await this.findById(id);
+    const user = await this.findById(id, { refreshToken: true });
 
     if (user === null) {
       return null;

@@ -29,4 +29,12 @@ export default class linkListService {
     const linkListObj = this.create(linkList);
     return await this.linkListRepository.save(linkListObj);
   }
+
+  async findByUser(userId: string): Promise<LinkList[]> {
+    const linkListQB = this.linkListRepository.createQueryBuilder('linkList');
+    return await linkListQB
+      .select()
+      .where('linkList.userId = :userId', { userId })
+      .getMany();
+  }
 }

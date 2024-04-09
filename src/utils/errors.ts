@@ -19,3 +19,9 @@ export class UnauthorizedError extends HttpException {
     super(401, message);
   }
 }
+
+export class BadRequestErrror extends HttpException {
+  constructor(message = 'Bad Request') {
+    super(400, message);
+  }
+}

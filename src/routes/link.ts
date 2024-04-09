@@ -28,4 +28,16 @@ router.post(
   })
 );
 
+router.get(
+  '/',
+  expressAsyncHandler(async (req, res, next) => {
+    try {
+      const linkList = await linkListService.findByUser(req.user.userId);
+      res.send(linkList);
+    } catch (error) {
+      next(error);
+    }
+  })
+);
+
 export default router;
