@@ -30,11 +30,15 @@ export default class linkListService {
     return await this.linkListRepository.save(linkListObj);
   }
 
-  async findByUser(userId: string): Promise<LinkList[]> {
+  async findByUser(userId: string, page: number = 1): Promise<LinkList[]> {
+    const take = 10;
+    const skip = (page - 1) * take;
     const linkListQB = this.linkListRepository.createQueryBuilder('linkList');
     return await linkListQB
       .select()
       .where('linkList.userId = :userId', { userId })
+      .take(10)
+      .skip(skip)
       .getMany();
   }
 }
