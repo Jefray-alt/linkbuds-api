@@ -18,8 +18,8 @@ router.post(
         throw new Error('User not found');
       }
 
-      user.linkList.push(linkList);
-      await userService.save(user);
+      linkList.user = user;
+      await linkListService.save(linkList);
 
       res.send(linkList);
     } catch (error) {

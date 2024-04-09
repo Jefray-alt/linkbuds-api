@@ -3,6 +3,7 @@ import { AppDataSource } from '../data-source';
 import { User } from '../entity/User.entity';
 import { type UserPayload } from '../types/payload';
 import bcrypt from 'bcrypt';
+import { type FindOptionsSelect } from 'typeorm';
 
 export default class UserService {
   private readonly userRepository;
@@ -20,12 +21,24 @@ export default class UserService {
     return await this.userRepository.save(userObj);
   }
 
-  async findById(id: string): Promise<User | null> {
-    return await this.userRepository.findOne({ where: { id } });
+  async findById(
+    id: string,
+    options?: FindOptionsSelect<User>
+  ): Promise<User | null> {
+    return await this.userRepository.findOne({
+      select: { password: false, refreshToken: false, ...options },
+      where: { id }
+    });
   }
 
-  async findByEmail(email: string): Promise<User | null> {
-    return await this.userRepository.findOne({ where: { email } });
+  async findByEmail(
+    email: string,
+    options?: FindOptionsSelect<User>
+  ): Promise<User | null> {
+    return await this.userRepository.findOne({
+      where: { email },
+      select: { password: false, refreshToken: false, ...options }
+    });
   }
 
   async updateRefreshToken(

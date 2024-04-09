@@ -18,7 +18,9 @@ export class LinkList {
   @ManyToOne(() => User, (user) => user.linkList)
   user: User;
 
-  @OneToMany(() => Link, (link) => link.linkList)
+  @OneToMany(() => Link, (link) => link.linkList, {
+    cascade: true
+  })
   links: Link[];
 
   @Column({ nullable: false })

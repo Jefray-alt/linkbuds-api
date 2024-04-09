@@ -1,4 +1,4 @@
-import { REFRESH_TOKEN_DURATION } from '../config/constants';
+import { COOKIE_MAX_AGE, REFRESH_TOKEN_DURATION } from '../config/constants';
 import UserService from '../service/userService';
 import { verifyToken, generateJWT } from '../utils/auth';
 import { UnauthorizedError } from '../utils/errors';
@@ -26,7 +26,9 @@ router.post(
 
       const user = verifyToken(refreshToken);
 
-      const userDB = await userService.findById(user.userId);
+      const userDB = await userService.findById(user.userId, {
+        refreshToken: true
+      });
 
       if (userDB?.refreshToken == null) {
         throw new UnauthorizedError('Invalid refresh token');
@@ -59,7 +61,7 @@ router.post(
         httpOnly: true,
         sameSite: 'none',
         secure: false,
-        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+        maxAge: COOKIE_MAX_AGE
       });
 
       console.log('accesstoken', user);

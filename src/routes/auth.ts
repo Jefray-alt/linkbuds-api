@@ -1,4 +1,8 @@
-import { REFRESH_TOKEN_DURATION, SALT_ROUNDS } from '../config/constants';
+import {
+  COOKIE_MAX_AGE,
+  REFRESH_TOKEN_DURATION,
+  SALT_ROUNDS
+} from '../config/constants';
 import UserService from '../service/userService';
 import { generateJWT } from '../utils/auth';
 import { UnauthorizedError } from '../utils/errors';
@@ -48,7 +52,7 @@ router.post(
         httpOnly: true,
         sameSite: 'none',
         secure: false,
-        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+        maxAge: COOKIE_MAX_AGE
       });
 
       res.send({
@@ -72,7 +76,10 @@ router.post(
   '/login',
   asyncHandler(async (req, res, next) => {
     try {
-      const user = await userService.findByEmail(req.body.email as string);
+      const user = await userService.findByEmail(req.body.email as string, {
+        refreshToken: true,
+        password: true
+      });
 
       if (user == null) {
         throw new UnauthorizedError('User not found');
@@ -106,7 +113,7 @@ router.post(
         httpOnly: true,
         sameSite: 'none',
         secure: false,
-        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+        maxAge: COOKIE_MAX_AGE
       });
       res.send({
         user: {
