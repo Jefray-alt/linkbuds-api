@@ -1,3 +1,4 @@
+import { type LinkList } from '../entity/LinkList.entity';
 import LinkListService from '../service/linkListService';
 import UserService from '../service/userService';
 import { type LinkListPayload } from '../types/payload';
@@ -52,6 +53,32 @@ router.get(
         throw new BadRequestErrror('Link list does not exist');
       }
       res.send(linkList);
+    } catch (error) {
+      next(error);
+    }
+  })
+);
+
+router.patch(
+  '/:slug',
+  expressAsyncHandler(async (req, res, next) => {
+    try {
+      const { slug } = req.params;
+      const { userId } = req.user;
+      const linkList = await linkListService.findOneBySlug(userId, slug);
+
+      if (linkList === null) {
+        throw new BadRequestErrror('Link list does not exist');
+      }
+
+      const updatedLinkList: LinkList = {
+        ...linkList,
+        ...req.body
+      };
+
+      const newUpdatedLinkList = await linkListService.save(updatedLinkList);
+
+      res.send(newUpdatedLinkList);
     } catch (error) {
       next(error);
     }
