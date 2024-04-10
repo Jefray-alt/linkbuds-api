@@ -8,8 +8,8 @@ export const AppDataSource = new DataSource({
   username: DBConfig.DB_USER,
   password: DBConfig.DB_PASSWORD,
   database: DBConfig.DB_NAME,
-  synchronize: true,
-  logging: true,
+  synchronize: process.env.NODE_ENV === 'development',
+  logging: process.env.NODE_ENV === 'development',
   /**
    *  Should use JS or else it will fail on compile.
    *  Reference: https://github.com/nestjs/nest/issues/4283#issuecomment-597987321
