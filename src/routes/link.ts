@@ -1,6 +1,7 @@
 import LinkListService from '../service/linkListService';
 import UserService from '../service/userService';
 import { type LinkListPayload } from '../types/payload';
+import { BadRequestErrror } from '../utils/errors';
 import { Router } from 'express';
 import expressAsyncHandler from 'express-async-handler';
 
@@ -33,6 +34,23 @@ router.get(
   expressAsyncHandler(async (req, res, next) => {
     try {
       const linkList = await linkListService.findByUser(req.user.userId);
+      res.send(linkList);
+    } catch (error) {
+      next(error);
+    }
+  })
+);
+
+router.get(
+  '/:slug',
+  expressAsyncHandler(async (req, res, next) => {
+    try {
+      const { slug } = req.params;
+      const { userId } = req.user;
+      const linkList = await linkListService.findOneBySlug(userId, slug);
+      if (linkList === null) {
+        throw new BadRequestErrror('Link list does not exist');
+      }
       res.send(linkList);
     } catch (error) {
       next(error);

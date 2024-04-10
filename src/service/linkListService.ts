@@ -41,4 +41,14 @@ export default class linkListService {
       .skip(skip)
       .getMany();
   }
+
+  async findOneBySlug(userId: string, slug: string): Promise<LinkList | null> {
+    const linkListQB = this.linkListRepository.createQueryBuilder('linkList');
+    return await linkListQB
+      .select()
+      .leftJoinAndSelect('linkList.links', 'link')
+      .where('linkList.userId = :userId', { userId })
+      .andWhere('linkList.slug = :slug', { slug })
+      .getOne();
+  }
 }
