@@ -1,4 +1,5 @@
 import { DBConfig } from './config';
+import path from 'path';
 import { DataSource } from 'typeorm';
 
 export const AppDataSource = new DataSource({
@@ -14,7 +15,7 @@ export const AppDataSource = new DataSource({
    *  Should use JS or else it will fail on compile.
    *  Reference: https://github.com/nestjs/nest/issues/4283#issuecomment-597987321
    **/
-  entities: ['dist/**/*.entity.js'],
+  entities: [path.join(__dirname, '/../**/*.entity{.js,.ts}')],
   subscribers: [],
   migrations: []
 });

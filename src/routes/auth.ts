@@ -5,7 +5,7 @@ import {
 } from '../config/constants';
 import UserService from '../service/userService';
 import { generateJWT } from '../utils/auth';
-import { UnauthorizedError } from '../utils/errors';
+import { BadRequestErrror, UnauthorizedError } from '../utils/errors';
 import bcrypt from 'bcrypt';
 import { Router } from 'express';
 import asyncHandler from 'express-async-handler';
@@ -17,6 +17,13 @@ router.post(
   '/register',
   asyncHandler(async (req, res, next) => {
     try {
+      const isUserExisting = await userService.findByEmail(
+        req.body.email as string
+      );
+      if (isUserExisting !== null) {
+        throw new BadRequestErrror('User already exists');
+      }
+
       const hashedPassword = bcrypt.hashSync(
         req.body.password as string,
         bcrypt.genSaltSync(SALT_ROUNDS)
