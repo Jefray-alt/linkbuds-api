@@ -1,7 +1,7 @@
 import { type LinkList } from '../entity/LinkList.entity';
 import LinkListService from '../service/linkListService';
 import UserService from '../service/userService';
-import { type LinkListPayload } from '../types/payload';
+import { type LinkPayload, type LinkListPayload } from '../types/payload';
 import { BadRequestErrror } from '../utils/errors';
 import { Router } from 'express';
 import expressAsyncHandler from 'express-async-handler';
@@ -76,9 +76,49 @@ router.patch(
         ...req.body
       };
 
+      if (updatedLinkList.links.length !== 0) {
+        updatedLinkList.links = [];
+      }
+
       const newUpdatedLinkList = await linkListService.save(updatedLinkList);
 
       res.send(newUpdatedLinkList);
+    } catch (error) {
+      next(error);
+    }
+  })
+);
+
+router.delete(
+  '/:slug',
+  expressAsyncHandler(async (req, res, next) => {
+    try {
+      const { slug } = req.params;
+      const { userId } = req.user;
+      const result = await linkListService.deleteBySlug(userId, slug);
+
+      if (result === 0) {
+        throw new BadRequestErrror('Data was not deleted');
+      }
+
+      res.send({ message: 'Data was deleted' });
+    } catch (error) {
+      next(error);
+    }
+  })
+);
+
+router.post(
+  '/:slug/link/:id',
+  expressAsyncHandler(async (req, res, next) => {
+    try {
+      const { slug } = req.params;
+      const newLink = await linkListService.addLinkBySlug(
+        req.body as LinkPayload,
+        slug
+      );
+
+      res.send(newLink);
     } catch (error) {
       next(error);
     }
