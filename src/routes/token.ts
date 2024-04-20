@@ -64,11 +64,10 @@ router.post(
         maxAge: COOKIE_MAX_AGE
       });
 
-      console.log('accesstoken', user);
       res.send({ accessToken });
     } catch (error) {
       if (error instanceof jwt.TokenExpiredError) {
-        next(new UnauthorizedError('Token expired.'));
+        next(new UnauthorizedError('Refresh Token has already expired'));
         return;
       }
       next(error);
