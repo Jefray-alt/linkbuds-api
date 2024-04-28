@@ -14,13 +14,14 @@ router.post(
   '/',
   expressAsyncHandler(async (req, res, next) => {
     try {
-      const linkList = linkListService.create(req.body as LinkListPayload);
       const user = await userService.findById(req.user.userId);
       if (user === null) {
         throw new Error('User not found');
       }
 
-      linkList.user = user;
+      const linkListPayload = req.body as LinkListPayload;
+      linkListPayload.user = user;
+      const linkList = await linkListService.create(linkListPayload);
       await linkListService.save(linkList);
 
       res.send(linkList);
@@ -95,7 +96,7 @@ router.delete(
     try {
       const { slug } = req.params;
       const { userId } = req.user;
-      const result = await linkListService.deleteBySlug(userId, slug);
+      const result = await linkListService.softDeleteBySlug(userId, slug);
 
       if (result === 0) {
         throw new BadRequestErrror('Data was not deleted');

@@ -13,12 +13,24 @@ export default class linkListService {
     this.linkRepository = AppDataSource.getRepository(Link);
   }
 
-  create(linkList: LinkListPayload): LinkList {
+  async create(linkList: LinkListPayload): Promise<LinkList> {
+    const linkListQB = this.linkListRepository.createQueryBuilder('linkList');
+    const isLinkListExists = await linkListQB
+      .select()
+      .where('linkList.slug = :slug', { slug: linkList.slug })
+      .andWhere('linkList.user = :user', { user: linkList.user.id })
+      .getOne();
+
+    if (isLinkListExists !== null) {
+      throw new BadRequestErrror(
+        `Slug ${linkList.slug} already exists for user ${linkList.user.id}`
+      );
+    }
     return this.linkListRepository.create(linkList);
   }
 
   async save(linkList: LinkListPayload): Promise<LinkList> {
-    const linkListObj = this.create(linkList);
+    const linkListObj = await this.create(linkList);
     return await this.linkListRepository.save(linkListObj);
   }
 
@@ -44,10 +56,10 @@ export default class linkListService {
       .getOne();
   }
 
-  async deleteBySlug(userId: string, slug: string): Promise<number> {
+  async softDeleteBySlug(userId: string, slug: string): Promise<number> {
     const linkListQB = this.linkListRepository.createQueryBuilder('linkList');
     const result = await linkListQB
-      .delete()
+      .softDelete()
       .where('linkList.userId = :userId', { userId })
       .andWhere('linkList.slug = :slug', { slug })
       .execute();
