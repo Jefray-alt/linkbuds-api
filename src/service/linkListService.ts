@@ -14,18 +14,7 @@ export default class linkListService {
   }
 
   create(linkList: LinkListPayload): LinkList {
-    const createdLink = this.linkListRepository.create(linkList);
-    if (linkList.link !== undefined) {
-      const links = linkList.link.map((item) => {
-        const link = new Link();
-        link.url = item.url;
-        link.name = item.name;
-        return link;
-      });
-
-      createdLink.links = links;
-    }
-    return createdLink;
+    return this.linkListRepository.create(linkList);
   }
 
   async save(linkList: LinkListPayload): Promise<LinkList> {
