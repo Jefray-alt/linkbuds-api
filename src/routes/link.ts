@@ -59,7 +59,7 @@ router.get(
   })
 );
 
-router.patch(
+router.put(
   '/:slug',
   expressAsyncHandler(async (req, res, next) => {
     try {
