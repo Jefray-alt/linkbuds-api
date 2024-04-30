@@ -60,8 +60,8 @@ export default class linkListService {
     const linkListQB = this.linkListRepository.createQueryBuilder('linkList');
     const result = await linkListQB
       .softDelete()
-      .where('linkList.userId = :userId', { userId })
-      .andWhere('linkList.slug = :slug', { slug })
+      .where('userId = :userId', { userId })
+      .andWhere('slug = :slug', { slug })
       .execute();
 
     if (

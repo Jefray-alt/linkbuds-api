@@ -5,7 +5,8 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne
+  ManyToOne,
+  DeleteDateColumn
 } from 'typeorm';
 
 @Entity({ name: 'links' })
@@ -27,4 +28,7 @@ export class Link {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @DeleteDateColumn()
+  deletedAt: Date;
 }
