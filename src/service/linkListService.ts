@@ -1,7 +1,7 @@
 import { AppDataSource } from '../data-source';
 import { Link } from '../entity/Link.entity';
 import { LinkList } from '../entity/LinkList.entity';
-import { type LinkPayload, type LinkListPayload } from '../types/payload';
+import { type LinkListPayload } from '../types/payload';
 import { BadRequestErrror } from '../utils/errors';
 
 export default class linkListService {
@@ -50,8 +50,6 @@ export default class linkListService {
     const linkListQB = this.linkListRepository.createQueryBuilder('linkList');
     return await linkListQB
       .select()
-      .leftJoinAndSelect('linkList.links', 'link')
-      .leftJoinAndSelect('linkList.user', 'user')
       .where('linkList.userId = :userId', { userId })
       .andWhere('linkList.slug = :slug', { slug })
       .getOne();
@@ -80,33 +78,10 @@ export default class linkListService {
     const linkListQB = this.linkListRepository.createQueryBuilder('linkList');
     await linkListQB
       .update()
-      .set(link)
-      .where('linkList.slug = :slug', { slug: link.slug })
+      .set({ ...link })
+      .where('slug = :slug', { slug: link.slug })
       .execute();
 
     return await this.findOneBySlug(userId, link.slug);
-  }
-
-  async addLinkBySlug(link: LinkPayload, slug: string): Promise<Link> {
-    const linkListQB = this.linkListRepository.createQueryBuilder('linkList');
-    const linkList = await linkListQB
-      .select()
-      .where('linkList.slug = :slug', { slug })
-      .getOne();
-
-    if (linkList === null) {
-      throw new BadRequestErrror('Linklist not found');
-    }
-
-    const linkQB = this.linkRepository.createQueryBuilder('link');
-    const createdLink = await linkQB
-      .insert()
-      .into('links')
-      .values({ slug, ...link })
-      .execute();
-
-    return {
-      ...(createdLink.identifiers[0] as Link)
-    };
   }
 }

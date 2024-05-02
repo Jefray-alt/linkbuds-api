@@ -67,9 +67,15 @@ router.patch(
       const { slug } = req.params;
       const { userId } = req.user;
       const linkList = await linkListService.findOneBySlug(userId, slug);
+      const payload = req.body as LinkListPayload;
 
       if (linkList === null) {
         throw new BadRequestErrror('Link list does not exist');
+      }
+
+      // eslint-disable-next-line eqeqeq
+      if (payload.slug != undefined) {
+        throw new BadRequestErrror('Slug cannot be updated');
       }
 
       const updatedLinkList: LinkList = {
