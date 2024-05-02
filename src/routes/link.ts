@@ -1,7 +1,7 @@
 import { type LinkList } from '../entity/LinkList.entity';
 import LinkListService from '../service/linkListService';
 import UserService from '../service/userService';
-import { type LinkPayload, type LinkListPayload } from '../types/payload';
+import { type LinkListPayload } from '../types/payload';
 import { BadRequestErrror } from '../utils/errors';
 import { Router } from 'express';
 import expressAsyncHandler from 'express-async-handler';
@@ -60,7 +60,7 @@ router.get(
   })
 );
 
-router.put(
+router.patch(
   '/:slug',
   expressAsyncHandler(async (req, res, next) => {
     try {
@@ -77,11 +77,10 @@ router.put(
         ...req.body
       };
 
-      if (updatedLinkList.links.length !== 0) {
-        updatedLinkList.links = [];
-      }
-
-      const newUpdatedLinkList = await linkListService.save(updatedLinkList);
+      const newUpdatedLinkList = await linkListService.updateBySlug(
+        userId,
+        updatedLinkList
+      );
 
       res.send(newUpdatedLinkList);
     } catch (error) {
@@ -103,23 +102,6 @@ router.delete(
       }
 
       res.send({ message: 'Data was deleted' });
-    } catch (error) {
-      next(error);
-    }
-  })
-);
-
-router.post(
-  '/:slug/link/:id',
-  expressAsyncHandler(async (req, res, next) => {
-    try {
-      const { slug } = req.params;
-      const newLink = await linkListService.addLinkBySlug(
-        req.body as LinkPayload,
-        slug
-      );
-
-      res.send(newLink);
     } catch (error) {
       next(error);
     }

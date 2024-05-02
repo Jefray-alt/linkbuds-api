@@ -1,4 +1,3 @@
-import { Link } from './Link.entity';
 import { User } from './User.entity';
 import {
   Entity,
@@ -7,7 +6,6 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
-  OneToMany,
   DeleteDateColumn
 } from 'typeorm';
 
@@ -18,11 +16,6 @@ export class LinkList {
 
   @ManyToOne(() => User, (user) => user.linkList)
   user: User;
-
-  @OneToMany(() => Link, (link) => link.linkList, {
-    cascade: true
-  })
-  links: Link[];
 
   @Column({ nullable: false })
   name: string;

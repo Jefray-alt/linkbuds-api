@@ -51,6 +51,7 @@ export default class linkListService {
     return await linkListQB
       .select()
       .leftJoinAndSelect('linkList.links', 'link')
+      .leftJoinAndSelect('linkList.user', 'user')
       .where('linkList.userId = :userId', { userId })
       .andWhere('linkList.slug = :slug', { slug })
       .getOne();
@@ -73,6 +74,17 @@ export default class linkListService {
     }
 
     return result.affected;
+  }
+
+  async updateBySlug(userId: string, link: LinkList): Promise<LinkList | null> {
+    const linkListQB = this.linkListRepository.createQueryBuilder('linkList');
+    await linkListQB
+      .update()
+      .set(link)
+      .where('linkList.slug = :slug', { slug: link.slug })
+      .execute();
+
+    return await this.findOneBySlug(userId, link.slug);
   }
 
   async addLinkBySlug(link: LinkPayload, slug: string): Promise<Link> {
