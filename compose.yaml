@@ -1,0 +1,35 @@
+
+services:
+  app:
+    container_name: node-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env
+    volumes:
+      - .:/usr/local/app
+      - /usr/local/app/node_modules
+    depends_on:
+      - db
+    command: npm run dev
+
+  db:
+    container_name: postgres-db
+    image: postgres:latest
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:

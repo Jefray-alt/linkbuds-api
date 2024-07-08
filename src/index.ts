@@ -16,9 +16,11 @@ const port = process.env.PORT ?? 3000;
 void (async function mainModule() {
   try {
     await AppDataSource.initialize();
+
     app.use(express.json());
     app.use(cookieParser());
     app.use(tokenDecode);
+
     app.use('/api', router);
 
     app.use(notFoundHandler);
@@ -27,7 +29,7 @@ void (async function mainModule() {
     app.listen(port, () => {
       console.log(`[Server]: Server is running at http://localhost:${port}`);
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error starting the server', error);
   }
 })();
