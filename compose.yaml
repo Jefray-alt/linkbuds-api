@@ -14,7 +14,6 @@ services:
       - /usr/local/app/node_modules
     depends_on:
       - db
-    command: npm run dev
 
   db:
     container_name: postgres-db
