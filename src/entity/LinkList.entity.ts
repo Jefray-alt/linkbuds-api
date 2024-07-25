@@ -23,7 +23,7 @@ export class LinkList {
   @Column({ nullable: false })
   description: string;
 
-  @Column({ default: 'user' })
+  @Column({ unique: true })
   slug: string;
 
   @CreateDateColumn()
