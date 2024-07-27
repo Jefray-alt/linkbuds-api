@@ -3,6 +3,7 @@ import LinkListService from '../service/linkListService';
 import UserService from '../service/userService';
 import { type LinkListPayload } from '../types/payload';
 import { BadRequestErrror } from '../utils/errors';
+import { CreateLinkListValidation } from '../validations/LinkList/LinkList.validations';
 import { Router } from 'express';
 import expressAsyncHandler from 'express-async-handler';
 
@@ -14,6 +15,7 @@ router.post(
   '/',
   expressAsyncHandler(async (req, res, next) => {
     try {
+      await CreateLinkListValidation.validateAsync(req.body);
       const user = await userService.findById(req.user.userId);
       if (user === null) {
         throw new Error('User not found');

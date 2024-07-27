@@ -6,6 +6,11 @@ export interface UserPayload {
   password: string;
 }
 
+export interface LoginPayload {
+  email: string;
+  password: string;
+}
+
 export interface LinkListPayload {
   name: string;
   description: string;
