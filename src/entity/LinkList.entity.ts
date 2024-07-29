@@ -1,3 +1,4 @@
+import { Link } from './Link.entity';
 import { User } from './User.entity';
 import {
   Entity,
@@ -6,7 +7,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
-  DeleteDateColumn
+  DeleteDateColumn,
+  OneToMany
 } from 'typeorm';
 
 @Entity({ name: 'link_lists' })
@@ -16,6 +18,9 @@ export class LinkList {
 
   @ManyToOne(() => User, (user) => user.linkList)
   user: User;
+
+  @OneToMany(() => Link, (link) => link.linkList)
+  links: Link[];
 
   @Column({ nullable: false })
   name: string;
