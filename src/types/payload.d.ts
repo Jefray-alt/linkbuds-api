@@ -1,3 +1,4 @@
+import { type Link } from '../entity/Link.entity';
 import { type User } from '../entity/User.entity';
 
 export interface UserPayload {
@@ -16,6 +17,7 @@ export interface LinkListPayload {
   description: string;
   slug: string;
   user: User;
+  links?: Link[];
 }
 
 export interface LinkPayload {
