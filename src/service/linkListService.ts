@@ -23,7 +23,7 @@ export default class linkListService {
 
     if (isLinkListExists !== null) {
       throw new BadRequestErrror(
-        `Slug ${linkList.slug} already exists for user ${linkList.user.id}`
+        `Slug ${linkList.slug} already exists for current user`
       );
     }
     return this.linkListRepository.create(linkList);
@@ -52,6 +52,7 @@ export default class linkListService {
       .select()
       .where('linkList.userId = :userId', { userId })
       .andWhere('linkList.slug = :slug', { slug })
+      .leftJoinAndSelect('linkList.links', 'links')
       .getOne();
   }
 
