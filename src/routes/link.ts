@@ -3,7 +3,10 @@ import LinkListService from '../service/linkListService';
 import UserService from '../service/userService';
 import { type LinkListPayload } from '../types/payload';
 import { BadRequestErrror } from '../utils/errors';
-import { CreateLinkListValidation } from '../validations/LinkList/LinkList.validations';
+import {
+  CreateLinkListValidation,
+  UpdateLinkListValidation
+} from '../validations/LinkList/LinkList.validations';
 import { Router } from 'express';
 import expressAsyncHandler from 'express-async-handler';
 
@@ -16,13 +19,16 @@ router.post(
   expressAsyncHandler(async (req, res, next) => {
     try {
       await CreateLinkListValidation.validateAsync(req.body);
+
       const user = await userService.findById(req.user.userId);
+
       if (user === null) {
         throw new Error('User not found');
       }
 
       const linkListPayload = req.body as LinkListPayload;
       linkListPayload.user = user;
+
       const linkList = await linkListService.create(linkListPayload);
       await linkListService.save(linkList);
 
@@ -52,9 +58,11 @@ router.get(
       const { slug } = req.params;
       const { userId } = req.user;
       const linkList = await linkListService.findOneBySlug(userId, slug);
+
       if (linkList === null) {
         throw new BadRequestErrror('Link list does not exist');
       }
+
       res.send(linkList);
     } catch (error) {
       next(error);
@@ -68,8 +76,11 @@ router.patch(
     try {
       const { slug } = req.params;
       const { userId } = req.user;
-      const linkList = await linkListService.findOneBySlug(userId, slug);
       const payload = req.body as LinkListPayload;
+
+      await UpdateLinkListValidation.validateAsync(payload);
+
+      const linkList = await linkListService.findOneBySlug(userId, slug);
 
       if (linkList === null) {
         throw new BadRequestErrror('Link list does not exist');
@@ -103,6 +114,7 @@ router.delete(
     try {
       const { slug } = req.params;
       const { userId } = req.user;
+
       const result = await linkListService.softDeleteBySlug(userId, slug);
 
       if (result === 0) {

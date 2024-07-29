@@ -20,6 +20,7 @@ router.post(
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     try {
       const refreshToken = req.cookies.refreshToken as string;
+
       if (refreshToken === undefined || refreshToken === null) {
         throw new UnauthorizedError('Refresh token is required');
       }

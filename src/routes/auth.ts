@@ -94,6 +94,7 @@ router.post(
   asyncHandler(async (req, res, next) => {
     try {
       const loginPayload = req.body as LoginPayload;
+
       await UserLoginPayload.validateAsync(loginPayload);
 
       const user = await userService.findByEmail(loginPayload.email, {
