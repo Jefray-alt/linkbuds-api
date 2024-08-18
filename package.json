@@ -21,8 +21,8 @@
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.11.3",
-    "reflect-metadata": "^0.2.1",
-    "typeorm": "^0.3.20"
+    "prisma": "^5.18.0",
+    "reflect-metadata": "^0.2.1"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
